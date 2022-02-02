@@ -11,18 +11,9 @@
             $this->tarif = $tar;
         }
 
-        function infos(){
-            echo "Borne min: $this->borneMin. Borne max: $this->borneMax. Tarif: $this->tarif";
-        }
     }
-    $tva = 14;
-    $timbre = 0.45;
-    $redevance= [
-        "small" => 22.65,
-        "medium" => 37.05,
-        "large" => 46.20
-    ];
     
+    $tva = 14;
     $tarifs = [
         new Tranche(0, 100, 0.794), 
         new Tranche(101, 150, 0.883),
@@ -43,19 +34,21 @@
         $newIndex = $_POST["newIndex"];
         $calibre = $_POST["calibre"];
         $consommation = $newIndex - $oldIndex;
-        // $consommation <= 150
+        $total_initial = 0;
+        
         if($consommation <= 150) {
-            // $consommation <= 100
             if($consommation <= $tarifs[0]->borneMax) {
                 $montantsFacture[0] = $consommation;
                 $montantsHT[0] = $consommation * $tarifs[0]->tarif;
+                $total_initial = $montantsHT[0];
             }
-            // 100 < $consommation <= 150
+            
             else {
                 $montantsFacture[0] = 100;
                 $montantsFacture[1] = $consommation - $montantsFacture[0];
                 $montantsHT[0] = $montantsFacture[0] * $tarifs[0]->tarif;
                 $montantsHT[1] = $montantsFacture[1] * $tarifs[1]->tarif;
+                $total_initial = $montantsHT[0] + $montantsHT[1];
             }
         }
       
@@ -63,23 +56,27 @@
             if($consommation <= $tarifs[2]->borneMax) {
                 $montantsFacture[2] = $consommation;
                 $montantsHT[2] = $consommation * $tarifs[2]->tarif;
+                $total_initial = $montantsHT[2];
             }
             else if($consommation <= $tarifs[3]->borneMax) {
                 $montantsFacture[3] = $consommation;
                 $montantsHT[3] = $consommation * $tarifs[3]->tarif;
+                $total_initial = $montantsHT[3];
             }
             else if($consommation <= $tarifs[4]->borneMax) {
                 $montantsFacture[4] = $consommation;
                 $montantsHT[4] = $consommation * $tarifs[4]->tarif;
+                $total_initial = $montantsHT[4];
             }
             else{
                 $montantsFacture[5] = $consommation;
                 $montantsHT[5] = $consommation * $tarifs[5]->tarif;
+                $total_initial = $montantsHT[5];
             }
         }
     }
+  
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -123,25 +120,19 @@
 <body>
 <section id="inputs">
 <form action="index2.php" method="POST">
-    <input type="text" name="oldIndex" placeholder="Old Index">
-     <input type="text" name="newIndex" placeholder="New Index" >
+    <input type="number" name="oldIndex" placeholder="Old Index">
+     <input type="number" name="newIndex" placeholder="New Index">
      <div>
-     <input type="checkbox" id="cal" value="small" name="calibre" >5-15 &nbsp;
-        <input type="checkbox" value="medium" name="calibre">15-20 &nbsp;
-        <input type="checkbox" value="large" name="calibre">>30 
+     <input type="checkbox" id="cal" value="22.65" name="calibre" >5-15 &nbsp;
+        <input type="checkbox" value="37.05" name="calibre">15-20 &nbsp;
+        <input type="checkbox" value="46.20" name="calibre">>30 
     </div>
         <input type="submit" id="calcul" value="Calcul" name="submit">
 </form>
 </section>
-   
+    
 
-    <table id="table">
-        <?php
-        if (isset($_POST["submit"])) {
-            foreach($montantsFacture as $key => $value) {
-
-        ?>
-        <table class="table table-borderless">
+   <table class="table table-borderless">
             <thead>
                 <tr>
                     <th></th>
@@ -151,8 +142,7 @@
                     <th>ض.ق.م <br><span></span>Taux TVA</th>
                     <th>مبلغ الرسوم <br><span> </span>Montant Taxes</th>
                     <th><span></span></th>
-                </tr>
-
+                </tr></thead> 
                 <tr>
                     <th>CONSOMMATION ELECTRICITE</th>
                     <td></td>
@@ -162,16 +152,32 @@
                     <td></td>
                     <th>ستھلاك الكھرباء</th>
                 </tr>
+        <?php
+        if (isset($_POST["submit"])) {    
+            foreach($montantsFacture as $key => $value) {
+              
+        ?>
+     
                 <tr>
-                    <td>TRANCHE</td>
+                    
+                    <td>Tranche &nbsp;<?php echo $key+1?></td>
                     <td><?php echo $value ?></td>
                     <td><?php echo $tarifs[$key]->tarif ?></td>
                     <td><?php echo $montantsHT[$key] ?></td>
                     <td><?php echo $tva . "%";?></td>
-                    <td><?php echo $montantsHT[$key] * $tva /100 ?></td>
-                    <th></th>
-                </tr>
+                    <td><?php echo ($montantsHT[$key] * $tva /100)?></td>
+                   
+
+                </tr> <?php } ?>
                 <tr>
+                    <th>REDEVANCE ELECTRIQUE</th>
+                    <td></td>
+                    <td></td>
+                    <td><?php echo $calibre ?></td>
+                    <td><?php echo $tva . "%";?></td>
+                    <td><?php echo $calibre * $tva /100 ?></td>
+                    <th>  إثاوة ثابتةالكھرباء</th>
+                    <tr>
                     <th>TAXES POUR LE COMPTE DE L’ETAT</th>
                   <td></td>
                   <td></td>
@@ -180,13 +186,19 @@
                   <td></td>
                     <th>   الرسوم المؤداة لفائدة الدولة</th>
                 </tr>
-                <tr>
+
+                </tr>
+               <?php foreach($montantsFacture as $key => $value) { ?>
+             
+             <?php } ?>
+             
+                   <tr>
                     <th>TOTAL TVA</th>
                   <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
-                  <td><?php echo $montantsHT[$key] * $tva /100 ?></td>
+                  <td><?php echo ($total_initial * $tva /100) +  ($calibre * $tva /100) ?></td>
                     <th>مجموع ض.ق.م</th>
                 </tr>
                 <tr>
@@ -198,33 +210,33 @@
                   <td><?php echo $timber ?></td>
                     <th>الطابع </th>
                 </tr>
+              
                 <tr>
                     <th>SOUS-TOTAL</th>
                   <td></td>
                   <td></td>
-                  <td><?php echo $montantsHT[$key] ?></td>
+                  <td><?php echo $total_initial ?></td>
                   <td></td>
-                  <td><?php echo $timber + ($montantsHT[$key] * $tva /100) ?></td>
+                  <td><?php echo $timber +($total_initial * $tva /100) +  ($calibre * $tva /100) ?></td>
                     <th>المجموع الجزئي</th>
                 </tr>
+                <?php  ?>
                 <tr>
                     <th>TOTAL ELECTICITE</th>
                   <td></td>
                   <td></td>
-                  <th><?php echo $montantsHT[$key] +$timber + ($montantsHT[$key] * $tva /100)  ?></th>
+                  <th><?php echo $total_initial + $timber + ($total_initial * $tva /100) +  ($calibre * $tva /100) ?></th>
                   <td></td>
                   <td></td>
-                    <th>المجموع الجزئي</th>
-                </tr>
+                    <th>مجموع الكھرباء</th>
+                </tr><?php ?>
             </thead>
             </tbody>
         </table>
 
-    </table>
-
         <?php
             }
-        }
+        
         ?>
     </table>
     
