@@ -12,7 +12,6 @@
         }
 
     }
-    
     $tva = 14;
     $tarifs = [
         new Tranche(0, 100, 0.794), 
@@ -123,9 +122,9 @@
     <input type="number" name="oldIndex" placeholder="Old Index">
      <input type="number" name="newIndex" placeholder="New Index">
      <div>
-     <input type="checkbox" id="cal" value="22.65" name="calibre" >5-15 &nbsp;
-        <input type="checkbox" value="37.05" name="calibre">15-20 &nbsp;
-        <input type="checkbox" value="46.20" name="calibre">>30 
+     <input type="radio" id="cal" value="22.65" name="calibre" >5-15 &nbsp;
+        <input type="radio" value="37.05" name="calibre">15-20 &nbsp;
+        <input type="radio" value="46.20" name="calibre">>30 
     </div>
         <input type="submit" id="calcul" value="Calcul" name="submit">
 </form>
