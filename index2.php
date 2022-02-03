@@ -34,14 +34,14 @@
         $calibre = $_POST["calibre"];
         $consommation = $newIndex - $oldIndex;
         $total_initial = 0;
-        
+
         if($consommation <= 150) {
             if($consommation <= $tarifs[0]->borneMax) {
                 $montantsFacture[0] = $consommation;
                 $montantsHT[0] = $consommation * $tarifs[0]->tarif;
                 $total_initial = $montantsHT[0];
             }
-            
+
             else {
                 $montantsFacture[0] = 100;
                 $montantsFacture[1] = $consommation - $montantsFacture[0];
@@ -50,7 +50,7 @@
                 $total_initial = $montantsHT[0] + $montantsHT[1];
             }
         }
-      
+
         else {
             if($consommation <= $tarifs[2]->borneMax) {
                 $montantsFacture[2] = $consommation;
@@ -74,7 +74,7 @@
             }
         }
     }
-  
+
 ?>
 
 <!DOCTYPE html>
@@ -91,12 +91,12 @@
             background-color: #747cdf;
             text-align: center;
             color: white;
+            width: 100px;
             font-size: 15px;
              border: none;
             border-radius: 5px;
             outline: none;
             cursor: pointer;
-           
             font-weight: bold;
         }
        input{
@@ -114,11 +114,25 @@
        #cal{
     margin-top: 15px;
 }
+#print {
+    width: 70px;
+    background-color: #747cdf;
+    height: 40px;
+    border-radius: 8px;
+    position: absolute;
+    top: 100%;
+}
+
+
+
+
+
 
 </style>
 <body>
 <section id="inputs">
-<form action="index2.php" method="POST">
+<form method="POST">
+
     <input type="number" name="oldIndex" placeholder="Old Index">
      <input type="number" name="newIndex" placeholder="New Index">
      <div>
@@ -127,9 +141,10 @@
         <input type="radio" value="46.20" name="calibre">>30 
     </div>
         <input type="submit" id="calcul" value="Calcul" name="submit">
+        <button id="print" onclick="valida()">PRINT</button>
 </form>
 </section>
-    
+
 
    <table class="table table-borderless">
             <thead>
@@ -154,18 +169,18 @@
         <?php
         if (isset($_POST["submit"])) {    
             foreach($montantsFacture as $key => $value) {
-              
+
         ?>
-     
+
                 <tr>
-                    
+
                     <td>Tranche &nbsp;<?php echo $key+1?></td>
                     <td><?php echo $value ?></td>
                     <td><?php echo $tarifs[$key]->tarif ?></td>
                     <td><?php echo $montantsHT[$key] ?></td>
                     <td><?php echo $tva . "%";?></td>
                     <td><?php echo ($montantsHT[$key] * $tva /100)?></td>
-                   
+
 
                 </tr> <?php } ?>
                 <tr>
@@ -188,9 +203,9 @@
 
                 </tr>
                <?php foreach($montantsFacture as $key => $value) { ?>
-             
+
              <?php } ?>
-             
+
                    <tr>
                     <th>TOTAL TVA</th>
                   <td></td>
@@ -209,7 +224,7 @@
                   <td><?php echo $timber ?></td>
                     <th>الطابع </th>
                 </tr>
-              
+
                 <tr>
                     <th>SOUS-TOTAL</th>
                   <td></td>
@@ -235,9 +250,17 @@
 
         <?php
             }
-        
+
         ?>
     </table>
-    
+<script type="text/javascript">
+function valida(){
+    var print=document.getElementById('print');
+
+    window.print();
+
+}
+</script>
+
 </body>
-</html>
+</html> 
