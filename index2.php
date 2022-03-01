@@ -88,13 +88,14 @@
 </head>
 <style>
    #calcul{
-            background-color: #747cdf;
+    height: 40px;
+    border-radius: 8px;
+    background-color: #747cdf;
             text-align: center;
             color: white;
             width: 100px;
             font-size: 15px;
              border: none;
-            border-radius: 5px;
             outline: none;
             cursor: pointer;
             font-weight: bold;
@@ -115,12 +116,25 @@
     margin-top: 15px;
 }
 #print {
-    width: 70px;
-    background-color: #747cdf;
+  
     height: 40px;
     border-radius: 8px;
-    position: absolute;
-    top: 100%;
+    background-color: #747cdf;
+            text-align: center;
+            color: white;
+            width: 100px;
+            font-size: 15px;
+             border: none;
+          
+            outline: none;
+            cursor: pointer;
+            font-weight: bold;
+   
+}
+.buttons{
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 20px;
 }
 
 
@@ -140,9 +154,14 @@
         <input type="radio" value="37.05" name="calibre">15-20 &nbsp;
         <input type="radio" value="46.20" name="calibre">>30 
     </div>
-        <input type="submit" id="calcul" value="Calcul" name="submit">
-        <button id="print" onclick="valida()">PRINT</button>
-</form>
+    <div class="buttons">
+    <div>
+        <button type="submit" id="calcul" value="Calcul" name="submit">CALCUL</button>
+
+        </div>
+       <div> <button id="print" onclick="valida()">PRINT</button>
+</div>
+</div></form>
 </section>
 
 
